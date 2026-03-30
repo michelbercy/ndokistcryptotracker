@@ -1,0 +1,429 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--bg4:#21262d;
+  --border:#30363d;--border2:#484f58;
+  --text:#e6edf3;--text2:#8b949e;--text3:#6e7681;
+  --blue:#58a6ff;--green:#3fb950;--red:#f85149;
+  --green-bg:rgba(63,185,80,0.12);--red-bg:rgba(248,81,73,0.12);
+  --accent:#1f6feb;
+}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px}
+.app{padding:0}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:52px}
+.logo{font-size:16px;font-weight:600;color:var(--text);letter-spacing:-0.3px}
+.logo span{color:var(--blue)}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.refresh-btn{background:var(--accent);color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px}
+.refresh-btn:hover{background:#388bfd}
+.last-upd{color:var(--text3);font-size:12px}
+.kpi-bar{background:var(--bg2);border-bottom:1px solid var(--border);padding:14px 16px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.kpi{padding:12px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px}
+.kpi-lbl{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px}
+.kpi-val{font-size:20px;font-weight:600;color:var(--text)}
+.kpi-val.pos{color:var(--green)}
+.kpi-val.neg{color:var(--red)}
+.kpi-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.main{padding:16px}
+.toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px;flex-wrap:wrap}
+.toolbar-left{display:flex;align-items:center;gap:8px}
+.section-lbl{font-size:14px;font-weight:600;color:var(--text)}
+.count-badge{background:var(--bg4);border:1px solid var(--border);border-radius:12px;padding:2px 8px;font-size:11px;color:var(--text2)}
+.add-btn{background:transparent;border:1px solid var(--border2);color:var(--text);border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:5px}
+.add-btn:hover{border-color:var(--blue);color:var(--blue)}
+.table-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+thead tr{background:var(--bg3)}
+th{padding:10px 14px;font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;text-align:right;border-bottom:1px solid var(--border)}
+th:first-child{text-align:left}
+td{padding:11px 14px;text-align:right;border-bottom:1px solid var(--border);color:var(--text);font-size:13px;vertical-align:middle}
+td:first-child{text-align:left}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,0.03)}
+.coin-cell{display:flex;align-items:center;gap:10px}
+.coin-icon{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;overflow:hidden}
+.coin-icon img{width:30px;height:30px;border-radius:50%;object-fit:cover;display:block}
+.coin-info{display:flex;flex-direction:column}
+.coin-name{font-size:13px;font-weight:500;color:var(--text)}
+.coin-sym{font-size:11px;color:var(--text3)}
+.pct-badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:5px;font-size:12px;font-weight:600}
+.pct-badge.pos{background:var(--green-bg);color:var(--green)}
+.pct-badge.neg{background:var(--red-bg);color:var(--red)}
+.del-btn{background:none;border:none;color:var(--text3);cursor:pointer;padding:3px 7px;border-radius:4px;font-size:15px}
+.del-btn:hover{background:var(--red-bg);color:var(--red)}
+.spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,0.2);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.err-bar{background:rgba(248,81,73,0.12);border:1px solid rgba(248,81,73,0.3);border-radius:6px;color:var(--red);font-size:12px;padding:8px 14px;margin-bottom:12px}
+.form-panel{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:14px}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:12px}
+.fgrp label{display:block;font-size:11px;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.04em}
+.fgrp select,.fgrp input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text);font-size:13px;outline:none}
+.fgrp select:focus,.fgrp input:focus{border-color:var(--blue)}
+.fgrp select option{background:var(--bg3)}
+.form-actions{display:flex;align-items:center;gap:8px}
+.submit-btn{background:var(--accent);color:#fff;border:none;border-radius:6px;padding:8px 18px;font-size:13px;font-weight:500;cursor:pointer}
+.submit-btn:hover{background:#388bfd}
+.cancel-lnk{background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;padding:8px 10px}
+.cancel-lnk:hover{color:var(--text)}
+.pnl-positive{color:var(--green)}
+.pnl-negative{color:var(--red)}
+.price-dim{color:var(--text3);font-style:italic;font-size:12px}
+.alloc-wrap{display:flex;align-items:center;gap:6px;justify-content:flex-end}
+
+/* ── MOBILE CARD VIEW ── */
+.card-list{display:none;flex-direction:column;gap:8px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.card-header-left{display:flex;align-items:center;gap:10px}
+.card-header-right{display:flex;align-items:center;gap:8px}
+.card-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.card-field{display:flex;flex-direction:column;gap:3px}
+.card-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em}
+.card-value{font-size:13px;font-weight:500;color:var(--text)}
+.card-footer{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.alloc-bar-wrap{display:flex;align-items:center;gap:8px;flex:1}
+.alloc-bar-bg{flex:1;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden}
+.alloc-bar-fill{height:100%;background:var(--accent);border-radius:2px}
+
+/* ── MEDIA QUERIES ── */
+@media(max-width:700px){
+  .last-upd{display:none}
+  .kpi-bar{grid-template-columns:repeat(2,1fr);gap:8px;padding:12px}
+  .kpi-val{font-size:17px}
+  .kpi-lbl{font-size:10px}
+  .main{padding:12px}
+  .table-wrap{display:none}
+  .card-list{display:flex}
+  .form-grid{grid-template-columns:1fr 1fr}
+  .submit-btn{flex:1}
+}
+@media(max-width:400px){
+  .logo{font-size:13px}
+  .refresh-btn span:last-child{display:none}
+  .kpi-bar{gap:6px;padding:10px}
+  .kpi{padding:10px}
+  .kpi-val{font-size:15px}
+  .form-grid{grid-template-columns:1fr}
+  .card-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+
+<div class="app">
+  <div class="topbar">
+    <div class="logo">NDOKIST <span>CRYPTOTRACK</span></div>
+    <div class="topbar-right">
+      <span class="last-upd" id="last-upd">—</span>
+      <button class="refresh-btn" onclick="doRefresh()" id="rbtn">
+        <span id="ricon">↻</span> <span>Rafraîchir</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="kpi-bar">
+    <div class="kpi"><div class="kpi-lbl">Capital investi</div><div class="kpi-val" id="k-inv">—</div></div>
+    <div class="kpi"><div class="kpi-lbl">Valeur actuelle</div><div class="kpi-val" id="k-cur">—</div></div>
+    <div class="kpi"><div class="kpi-lbl">P&amp;L total</div><div class="kpi-val" id="k-pnl">—</div></div>
+    <div class="kpi"><div class="kpi-lbl">Performance</div><div class="kpi-val" id="k-perf">—</div></div>
+  </div>
+
+  <div class="main">
+    <div id="err-bar" class="err-bar" style="display:none"></div>
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <span class="section-lbl">Mes positions</span>
+        <span class="count-badge" id="count-badge">0</span>
+      </div>
+      <button class="add-btn" onclick="toggleForm()" id="add-btn">+ Ajouter une position</button>
+    </div>
+
+    <div class="form-panel" id="form-panel" style="display:none">
+      <div class="form-grid">
+        <div class="fgrp"><label>Crypto</label>
+          <select id="f-id">
+            <option value="bitcoin">Bitcoin (BTC)</option>
+            <option value="ethereum">Ethereum (ETH)</option>
+            <option value="solana">Solana (SOL)</option>
+            <option value="cardano">Cardano (ADA)</option>
+            <option value="chainlink">Chainlink (LINK)</option>
+            <option value="ripple">XRP</option>
+            <option value="dogecoin">Dogecoin (DOGE)</option>
+            <option value="polkadot">Polkadot (DOT)</option>
+            <option value="avalanche-2">Avalanche (AVAX)</option>
+            <option value="matic-network">Polygon (MATIC)</option>
+            <option value="uniswap">Uniswap (UNI)</option>
+            <option value="litecoin">Litecoin (LTC)</option>
+            <option value="tether-gold">Tether Gold (XAUT)</option>
+          </select>
+        </div>
+        <div class="fgrp"><label>Quantité</label><input type="number" id="f-qty" placeholder="0.5" step="any" min="0"></div>
+        <div class="fgrp"><label>Prix d'achat (USDT)</label><input type="number" id="f-buy" placeholder="42000" step="any" min="0"></div>
+        <div class="fgrp"><label>Exchange</label>
+          <select id="f-exc">
+            <option value="Binance">Binance</option>
+            <option value="Kraken">Kraken</option>
+            <option value="Bitget">Bitget</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="submit-btn" onclick="addCoin()">Confirmer</button>
+        <button class="cancel-lnk" onclick="toggleForm()">Annuler</button>
+      </div>
+    </div>
+
+    <!-- Desktop table -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:20%;text-align:left"># Actif</th>
+            <th style="width:10%">Prix actuel</th>
+            <th style="width:9%">Break-even</th>
+            <th style="width:9%">24h %</th>
+            <th style="width:8%">Quantité</th>
+            <th style="width:9%">Investi</th>
+            <th style="width:10%">Valeur</th>
+            <th style="width:11%">P&amp;L jour</th>
+            <th style="width:9%">P&amp;L total</th>
+            <th style="width:5%"></th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+
+    <!-- Mobile cards -->
+    <div class="card-list" id="card-list"></div>
+  </div>
+</div>
+
+<script>
+const META={
+  bitcoin:{sym:'BTC',name:'Bitcoin',color:'#f7931a',bg:'#1a0f00',icon:'https://assets.coingecko.com/coins/images/1/small/bitcoin.png'},
+  ethereum:{sym:'ETH',name:'Ethereum',color:'#627eea',bg:'#0d0f1a',icon:'https://assets.coingecko.com/coins/images/279/small/ethereum.png'},
+  solana:{sym:'SOL',name:'Solana',color:'#9945ff',bg:'#12071a',icon:'https://assets.coingecko.com/coins/images/4128/small/solana.png'},
+  cardano:{sym:'ADA',name:'Cardano',color:'#0033ad',bg:'#00051a',icon:'https://assets.coingecko.com/coins/images/975/small/cardano.png'},
+  chainlink:{sym:'LINK',name:'Chainlink',color:'#2a5ada',bg:'#04081a',icon:'https://assets.coingecko.com/coins/images/877/small/chainlink-new-logo.png'},
+  ripple:{sym:'XRP',name:'XRP',color:'#346aa9',bg:'#050d1a',icon:'https://assets.coingecko.com/coins/images/44/small/xrp-symbol-white-128.png'},
+  dogecoin:{sym:'DOGE',name:'Dogecoin',color:'#c2a633',bg:'#1a1500',icon:'https://assets.coingecko.com/coins/images/5/small/dogecoin.png'},
+  polkadot:{sym:'DOT',name:'Polkadot',color:'#e6007a',bg:'#1a0010',icon:'https://assets.coingecko.com/coins/images/12171/small/polkadot.png'},
+  'avalanche-2':{sym:'AVAX',name:'Avalanche',color:'#e84142',bg:'#1a0505',icon:'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png'},
+  'matic-network':{sym:'MATIC',name:'Polygon',color:'#8247e5',bg:'#0e061a',icon:'https://assets.coingecko.com/coins/images/4713/small/polygon.png'},
+  uniswap:{sym:'UNI',name:'Uniswap',color:'#ff007a',bg:'#1a0010',icon:'https://assets.coingecko.com/coins/images/12504/small/uni.jpg'},
+  litecoin:{sym:'LTC',name:'Litecoin',color:'#bfbbbb',bg:'#181818',icon:'https://assets.coingecko.com/coins/images/2/small/litecoin.png'},
+  'tether-gold':{sym:'XAUT',name:'Tether Gold',color:'#d4af37',bg:'#1a1500',icon:'https://assets.coingecko.com/coins/images/10481/small/Tether_Gold.png'},
+};
+
+let portfolio=JSON.parse(localStorage.getItem('ct_v2')||'null')||[
+  {id:'bitcoin',qty:0.25,buy:42000,exc:'Binance'},
+  {id:'ethereum',qty:2,buy:2500,exc:'Coinbase'},
+  {id:'solana',qty:15,buy:95,exc:'Binance'},
+  {id:'cardano',qty:500,buy:0.45,exc:'Kraken'},
+  {id:'chainlink',qty:50,buy:14,exc:'Binance'},
+];
+let prices={};
+let changes={};
+let busy=false;
+
+function save(){localStorage.setItem('ct_v2',JSON.stringify(portfolio));}
+
+function fmtUSD(n,force4){
+  if(n===null||isNaN(n))return'—';
+  if(Math.abs(n)<0.01)return'$'+n.toFixed(6);
+  if(Math.abs(n)<1||force4)return'$'+n.toFixed(4);
+  if(Math.abs(n)<1000)return'$'+n.toFixed(2);
+  return'$'+Math.round(n).toLocaleString('fr-FR');
+}
+function fmtQty(n){
+  if(n>=100)return n.toLocaleString('fr-FR',{maximumFractionDigits:1});
+  if(n>=1)return n.toFixed(4);
+  return n.toFixed(6);
+}
+function pct(n){return(n>=0?'+':'')+n.toFixed(2)+'%';}
+
+async function doRefresh(){
+  if(busy)return;
+  busy=true;
+  const btn=document.getElementById('rbtn');
+  const ico=document.getElementById('ricon');
+  btn.disabled=true;
+  ico.innerHTML='<span class="spinner"></span>';
+  document.getElementById('err-bar').style.display='none';
+  const ids=[...new Set(portfolio.map(p=>p.id))].join(',');
+  try{
+    const r=await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`);
+    if(!r.ok)throw new Error(r.status);
+    const d=await r.json();
+    for(const id in d){prices[id]=d[id].usd;changes[id]=d[id].usd_24h_change||0;}
+    document.getElementById('last-upd').textContent='Mis à jour '+new Date().toLocaleTimeString('fr-FR');
+  }catch(e){
+    document.getElementById('err-bar').textContent='Impossible de contacter CoinGecko. Vérifiez votre connexion.';
+    document.getElementById('err-bar').style.display='block';
+  }
+  busy=false;btn.disabled=false;ico.innerHTML='↻';
+  render();
+}
+
+function coinIcon(m){
+  if(m.icon){
+    return`<div class="coin-icon" style="background:${m.bg}"><img src="${m.icon}" alt="${m.sym}" onerror="this.parentElement.innerHTML='<span style=color:${m.color};font-size:11px;font-weight:700>${m.sym.slice(0,2)}</span>'"></div>`;
+  }
+  return`<div class="coin-icon" style="background:${m.bg};color:${m.color}">${m.sym.slice(0,2)}</div>`;
+}
+
+function render(){
+  const tbody=document.getElementById('tbody');
+  const cardList=document.getElementById('card-list');
+  tbody.innerHTML='';
+  cardList.innerHTML='';
+  let totInv=0,totCur=0;
+  const rows=portfolio.map(p=>{
+    const m=META[p.id]||{sym:p.id.toUpperCase(),name:p.id,color:'#8b949e',bg:'#161b22'};
+    const pr=prices[p.id]??null;
+    const inv=p.qty*p.buy;
+    const cur=pr!=null?p.qty*pr:null;
+    // P&L total basé sur break-even (prix d'achat)
+    const pnl=cur!=null?cur-inv:null;
+    const pnlp=pnl!=null&&inv>0?(pnl/inv)*100:null;
+    // P&L du jour : (prix_actuel - prix_hier) * qty, prix_hier = pr / (1 + ch/100)
+    const ch=changes[p.id]??null;
+    const prYest=(pr!=null&&ch!=null)?pr/(1+ch/100):null;
+    const pnlDay=(pr!=null&&prYest!=null)?((pr-prYest)*p.qty):null;
+    const pnlDayPct=ch; // variation 24h en % = même chose
+    totInv+=inv;
+    if(cur!=null)totCur+=cur;
+    return{p,m,pr,inv,cur,pnl,pnlp,ch,pnlDay,pnlDayPct};
+  });
+  const maxVal=Math.max(...rows.map(r=>r.cur??0));
+
+  rows.forEach((r,i)=>{
+    const{p,m,pr,inv,cur,pnl,pnlp,ch,pnlDay,pnlDayPct}=r;
+    const allocPct=totCur>0&&cur!=null?((cur/totCur)*100):0;
+    const beAbovePrice=pr!=null?(p.buy>pr):null; // break-even au dessus du prix actuel = en perte
+
+    // ── Desktop row ──
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td><div class="coin-cell">
+        ${coinIcon(m)}
+        <div class="coin-info"><span class="coin-name">${m.name}</span><span class="coin-sym">${m.sym} · ${p.exc||'—'}</span></div>
+      </div></td>
+      <td>${pr!=null?fmtUSD(pr,pr<1):'<span class="price-dim">…</span>'}</td>
+      <td><span style="color:${beAbovePrice===null?'var(--text2)':beAbovePrice?'var(--red)':'var(--green)'};font-weight:500">${fmtUSD(p.buy,p.buy<1)}</span></td>
+      <td>${ch!=null?`<span class="pct-badge ${ch>=0?'pos':'neg'}">${pct(ch)}</span>`:'—'}</td>
+      <td style="color:#8b949e">${fmtQty(p.qty)}</td>
+      <td style="color:#8b949e">${fmtUSD(inv)}</td>
+      <td>${cur!=null?fmtUSD(cur):'—'}</td>
+      <td>${pnlDay!=null?`<span class="${pnlDay>=0?'pnl-positive':'pnl-negative'}">${pnlDay>=0?'+':''}${fmtUSD(pnlDay).replace('$','')} $<br><span style="font-size:11px">${pct(pnlDayPct)}</span></span>`:'—'}</td>
+      <td>${pnl!=null?`<span class="${pnl>=0?'pnl-positive':'pnl-negative'}">${pnl>=0?'+':''}${fmtUSD(pnl).replace('$','')}<br><span style="font-size:11px">${pct(pnlp)}</span></span>`:'—'}</td>
+      <td><button class="del-btn" onclick="removeCoin(${i})">×</button></td>
+    `;
+    tbody.appendChild(tr);
+
+    // ── Mobile card ──
+    const card=document.createElement('div');
+    card.className='card';
+    const pnlClass=pnl!=null?(pnl>=0?'pnl-positive':'pnl-negative'):'';
+    const pnlStr=pnl!=null?`<span class="${pnlClass}">${pnl>=0?'+':''}${fmtUSD(pnl).replace('$','')} $<br><span style="font-size:11px">${pct(pnlp)}</span></span>`:'—';
+    const pnlDayClass=pnlDay!=null?(pnlDay>=0?'pnl-positive':'pnl-negative'):'';
+    const pnlDayStr=pnlDay!=null?`<span class="${pnlDayClass}">${pnlDay>=0?'+':''}${fmtUSD(pnlDay).replace('$','')} $<br><span style="font-size:11px">${pct(pnlDayPct)}</span></span>`:'—';
+    const beColor=pr!=null?(p.buy>pr?'var(--red)':'var(--green)'):'var(--text2)';
+    card.innerHTML=`
+      <div class="card-header">
+        <div class="card-header-left">
+          ${coinIcon(m)}
+          <div class="coin-info">
+            <span class="coin-name">${m.name}</span>
+            <span class="coin-sym">${m.sym} · ${p.exc||'—'}</span>
+          </div>
+        </div>
+        <div class="card-header-right">
+          ${ch!=null?`<span class="pct-badge ${ch>=0?'pos':'neg'}">${pct(ch)}</span>`:''}
+          <button class="del-btn" onclick="removeCoin(${i})">×</button>
+        </div>
+      </div>
+      <div class="card-grid">
+        <div class="card-field">
+          <span class="card-label">Prix actuel</span>
+          <span class="card-value">${pr!=null?fmtUSD(pr,pr<1):'—'}</span>
+        </div>
+        <div class="card-field">
+          <span class="card-label">Break-even</span>
+          <span class="card-value" style="color:${beColor};font-weight:600">${fmtUSD(p.buy,p.buy<1)}</span>
+        </div>
+        <div class="card-field">
+          <span class="card-label">Valeur</span>
+          <span class="card-value">${cur!=null?fmtUSD(cur):'—'}</span>
+        </div>
+        <div class="card-field">
+          <span class="card-label">P&L jour</span>
+          <span class="card-value">${pnlDayStr}</span>
+        </div>
+        <div class="card-field">
+          <span class="card-label">P&L total</span>
+          <span class="card-value">${pnlStr}</span>
+        </div>
+        <div class="card-field">
+          <span class="card-label">Investi</span>
+          <span class="card-value" style="color:var(--text2)">${fmtUSD(inv)}</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="alloc-bar-wrap">
+          <span style="font-size:11px;color:var(--text3)">Allocation ${allocPct.toFixed(1)}%</span>
+          <div class="alloc-bar-bg"><div class="alloc-bar-fill" style="width:${allocPct.toFixed(1)}%"></div></div>
+        </div>
+      </div>
+    `;
+    cardList.appendChild(card);
+  });
+
+  const totPnl=totCur-totInv; // P&L total = valeur actuelle - capital investi (break-even based)
+  const totPct=totInv>0?(totPnl/totInv)*100:0;
+  // P&L du jour global = somme des pnlDay de chaque position
+  const totPnlDay=rows.reduce((s,r)=>s+(r.pnlDay??0),0);
+  const totPnlDayPct=totCur>0?(totPnlDay/(totCur-totPnlDay))*100:0;
+  document.getElementById('k-inv').textContent=fmtUSD(totInv);
+  document.getElementById('k-inv').className='kpi-val';
+  const kc=document.getElementById('k-cur');
+  kc.textContent=totCur>0?fmtUSD(totCur):'—';kc.className='kpi-val';
+  const kp=document.getElementById('k-pnl');
+  if(totCur>0){
+    kp.innerHTML=(totPnl>=0?'+':'')+fmtUSD(totPnl).replace('$','') + ' $'
+      +`<div class="kpi-sub" style="color:${totPnlDay>=0?'var(--green)':'var(--red)'}">Jour : ${totPnlDay>=0?'+':''}${fmtUSD(totPnlDay).replace('$','')} $ (${pct(totPnlDayPct)})</div>`;
+    kp.className='kpi-val '+(totPnl>=0?'pos':'neg');
+  } else{kp.textContent='—';kp.className='kpi-val';}
+  const kperf=document.getElementById('k-perf');
+  if(totCur>0){kperf.textContent=(totPct>=0?'+':'')+totPct.toFixed(2)+'%';kperf.className='kpi-val '+(totPct>=0?'pos':'neg');}
+  else{kperf.textContent='—';kperf.className='kpi-val';}
+  document.getElementById('count-badge').textContent=portfolio.length;
+}
+
+function toggleForm(){
+  const f=document.getElementById('form-panel');
+  const b=document.getElementById('add-btn');
+  const v=f.style.display!=='none';
+  f.style.display=v?'none':'block';
+  b.textContent=v?'+ Ajouter une position':'× Fermer';
+}
+
+function addCoin(){
+  const id=document.getElementById('f-id').value;
+  const qty=parseFloat(document.getElementById('f-qty').value);
+  const buy=parseFloat(document.getElementById('f-buy').value);
+  const exc=document.getElementById('f-exc').value;
+  if(!qty||!buy||qty<=0||buy<=0){alert('Quantité et prix requis.');return;}
+  portfolio.push({id,qty,buy,exc:exc||'—'});
+  save();
+  document.getElementById('f-qty').value='';
+  document.getElementById('f-buy').value='';
+  toggleForm();
+  doRefresh();
+}
+
+function removeCoin(i){portfolio.splice(i,1);save();render();}
+
+render();
+doRefresh();
+</script>
