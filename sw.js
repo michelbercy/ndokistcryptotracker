@@ -1,4 +1,4 @@
-const CACHE = 'cryptotrack-v3';
+const CACHE = 'cryptotrack-v4';
 const ASSETS = [
   './',
   './index.html',
